@@ -1,0 +1,127 @@
+#include <iostream>
+using namespace std;
+
+// Base class (Abstraction + Polymorphism)
+class Stack {
+protected:
+    int top;
+    int capacity;
+
+public:
+    Stack(int size) {
+        capacity = size;
+        top = -1;
+    }
+
+    virtual void push(int value) = 0;
+    virtual void pop() = 0;
+    virtual void peek() = 0;
+    virtual bool isEmpty() = 0;
+    virtual bool isFull() = 0;
+
+    virtual ~Stack() {}
+};
+
+// Derived class (Inheritance)
+class ArrayStack : public Stack {
+private:
+    int* arr;
+
+public:
+    ArrayStack(int size) : Stack(size) {
+        arr = new int[size];
+    }
+
+    void push(int value) override {
+        if (isFull()) {
+            cout << "Stack Overflow! Stack is full.\n";
+            return;
+        }
+        arr[++top] = value;
+        cout << "Pushed " << value << " into stack.\n";
+    }
+
+    void pop() override {
+        if (isEmpty()) {
+            cout << "Stack Underflow! Stack is empty.\n";
+            return;
+        }
+        cout << "Popped element: " << arr[top--] << endl;
+    }
+
+    void peek() override {
+        if (isEmpty()) {
+            cout << "Stack is empty. No top element.\n";
+            return;
+        }
+        cout << "Top element: " << arr[top] << endl;
+    }
+
+    bool isEmpty() override {
+        return top == -1;
+    }
+
+    bool isFull() override {
+        return top == capacity - 1;
+    }
+
+    ~ArrayStack() {
+        delete[] arr;
+    }
+};
+
+int main() {
+    int size, choice, value;
+
+    cout << "Enter stack size: ";
+    cin >> size;
+
+    Stack* stack = new ArrayStack(size); // Polymorphism
+
+    do {
+        cout << "\n--- Stack Menu ---\n";
+        cout << "1. Push\n";
+        cout << "2. Pop\n";
+        cout << "3. Peek\n";
+        cout << "4. Check if Empty\n";
+        cout << "5. Check if Full\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value to push: ";
+                cin >> value;
+                stack->push(value);
+                break;
+
+            case 2:
+                stack->pop();
+                break;
+
+            case 3:
+                stack->peek();
+                break;
+
+            case 4:
+                cout << (stack->isEmpty() ? "Stack is empty.\n" : "Stack is not empty.\n");
+                break;
+
+            case 5:
+                cout << (stack->isFull() ? "Stack is full.\n" : "Stack is not full.\n");
+                break;
+
+            case 0:
+                cout << "Exiting program...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Try again.\n";
+        }
+
+    } while (choice != 0);
+
+    delete stack;
+    return 0;
+}
